@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+.prod.env
+.dev.env
+
+/request
+
+credential_dev.json
+
+credential_prod.json

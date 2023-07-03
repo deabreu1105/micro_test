@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  micro_daniel_service:
+    image: image-service-directory:v1.0.0
+    container_name: service-directory-1
+    build: ./micro_daniel
+    ports:
+      - "4000:3000"
+    environment:
+      - SERVICE_ACCOUNT_CLIENT_EMAIL=test@test.com
+      - SERVICE_ACCOUNT_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\testasdad=\n-----END PRIVATE KEY-----\n
+      - USER_INPERSONATE=usuario@dominio.com
+      - DOMAIN=dominio.com
+      - PORT=3000
