@@ -1,0 +1,15 @@
+# Dependency directory
+# https://docs.npmjs.com/cli/shrinkwrap#caveats
+/node_modules
+
+/request
+
+.prod.env
+
+.dev.env
+
+credential_dev.json
+
+credential_prod.json
+
+
