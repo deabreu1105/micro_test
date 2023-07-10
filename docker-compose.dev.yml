@@ -1,8 +1,8 @@
 version: "3.9"
 services:
   micro_daniel_service:
-    image: image-service-directory:v1.0.0
-    container_name: service-directory-1
+    image: image-service-daniel:v1.0.0
+    container_name: service-daniel
     build: ./micro_daniel
     ports:
       - "4000:3000"
