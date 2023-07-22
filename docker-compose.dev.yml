@@ -1,8 +1,8 @@
 version: "3.9"
 services:
   micro_daniel_service:
-    image: image-service-directory:v1.0.0
-    container_name: service-directory-1
+    image: image-service-daniel:v1.0.0
+    container_name: service-daniel
     build: ./micro_daniel
     ports:
       - "4000:3000"
@@ -12,3 +12,10 @@ services:
       - USER_INPERSONATE=usuario@dominio.com
       - DOMAIN=dominio.com
       - PORT=3000
+  micro_jose_service:
+    image: image-service-jose:v1.0.0
+    container_name: service-jose-1
+    build: ./micro_jose
+    ports:
+      - "4001:4000"
+    
