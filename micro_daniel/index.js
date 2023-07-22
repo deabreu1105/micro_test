@@ -21,4 +21,5 @@ const server = app.listen(PORT, () => console.log(`Listening on port: ${PORT}`))
 function closeServer() {
   server.close();
 }  
+
 module.exports = { app, closeServer };
