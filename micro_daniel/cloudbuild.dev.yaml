@@ -1,0 +1,114 @@
+steps:
+##------------------------------ INICIO micro-daniel ------------------------------##
+# 1) Instalacion de dependencias
+- id: 'install-dependencies-micro-daniel'
+  name: "gcr.io/cloud-builders/npm"
+  args: [install]
+  dir: "micro_daniel"
+
+# 2) Levantamiento de pruebas unitarias
+#- id: 'run-unit-tests-micro-daniel'
+#  name: 'gcr.io/cloud-builders/npm'
+#  args: ['run','test']  # Ejecuta las pruebas unitarias
+#  env:
+#    - PORT=4000
+#    - USER_INPERSONATE=usuario@dominio.com.co
+#  dir: "micro_daniel"
+
+
+# 3) Pull the image using latest tag and use cache to build the previous image
+- id: 'pull-image-micro-daniel' 
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'docker pull us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:latest  || exit 0']
+  dir: 'micro_daniel'
+
+# 4) Construcción de la imagen
+- id: 'build-container-image-micro-daniel'
+  name: 'gcr.io/cloud-builders/docker'
+  args: ['build', 
+         '-t', 'us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:commitId-${SHORT_SHA}',
+         '-t', 'us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:latest', 
+         '-t', 'us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:tag-${TAG_NAME}',
+         '--cache-from', 'us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:latest',
+         '.']
+  dir: 'micro_daniel'
+
+# Construcción de la imagen
+#- id: 'build-container-image-bd-service'
+#  name: 'gcr.io/cloud-builders/docker'
+#  args: ['build', '-t', 'us-central1-docker.pkg.dev/producto-sentimental-int-2022/transfer-mail/image-service-bd:v${SHORT_SHA}', '.']
+#  dir: 'bd_service'
+
+
+# 5) Push the container image to Artifact Registry
+- id: 'push-image-to-artifact-registry-micro-daniel'
+  name: 'gcr.io/cloud-builders/docker'
+  entrypoint: /bin/sh
+  args: 
+    - -c
+    - |
+      docker push us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:commitId-${SHORT_SHA}
+      docker push us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:latest
+      docker push us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:tag-${TAG_NAME}
+  dir: 'micro-daniel'
+
+# Push the container image to Artifact Registry
+#- id: 'push-image-to-artifact-registry-bd-service'
+#  name: 'gcr.io/cloud-builders/docker'
+#  args: ['push', 'us-central1-docker.pkg.dev/producto-sentimental-int-2022/transfer-mail/image-service-bd:v${SHORT_SHA}']
+#  dir: 'bd_service'
+
+# 6) Deploy container image to Cloud Run
+- id: 'deploy-image-artifact-registry-to-cloud-run-micro-daniel'
+  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+  #  - 'beta'
+    - 'run'
+    - 'deploy'
+    - 'service-micro-daniel'
+    - '--image'
+    - 'us-central1-docker.pkg.dev/cloud-arquitect/micro-test/image-micro-test:tag-${TAG_NAME}'
+    - '--region'
+    - 'us-central1'
+    - '--port'
+    - '4000'
+    - '--platform'
+    - 'managed'
+    - '--min-instances'
+    - '0'
+    - '--max-instances'
+    - '100'
+    - '--allow-unauthenticated'
+    - '--memory'
+    - '256Mi'
+    - '--cpu'
+    - '1'
+    - '--timeout'
+    - '300'
+    - '--concurrency'
+    - '10'
+    - '--set-env-vars=DOMAIN=usuario.com.co'
+  dir: 'micro-daniel'
+
+# 7) Obtener la URL del servicio en Cloud Run
+- id: 'get-service-url-micro-daniel'
+  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'gcloud'
+  args:
+    - 'run'
+    - 'services'
+    - 'describe'
+    - 'service-micro-daniel'
+    - '--region'
+    - 'us-central1'
+    - '--platform'
+    - 'managed'
+    - '--format'
+    - 'value(status.url)'
+  env:
+    - 'SERVICE_URL=$$SERVICE_URL'
+  dir: "micro_daniel"
+
+##--------------------------------- FIN micro_daniel -------------------------------------##
