@@ -18,4 +18,11 @@ services:
     build: ./micro_jose
     ports:
       - "4001:4000"
+  micro_hector_service:
+    image: image-service-hector:v1.0.0
+    container_name: service-hector
+    build: ./micro_hector
+    ports: 
+      - "8080:80"
+       
     

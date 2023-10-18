@@ -1,1 +1,1 @@
-Este es un microservicio de prueba de Hector en nodejs
+Este es un microservicio de prueba de Hector en Python

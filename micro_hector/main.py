@@ -3,7 +3,7 @@ from flask import request
 
 app = Flask(__name__)
 @app.route('/saludo', methods=['GET'])
-def create_and_modify_bq():
+def saludo():
    if request.method == 'GET':
       return "hola munndo"
 if __name__ == "__main__":
